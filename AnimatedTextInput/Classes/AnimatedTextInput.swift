@@ -8,6 +8,7 @@ import UIKit
     @objc optional func animatedTextInputShouldBeginEditing(animatedTextInput: AnimatedTextInput) -> Bool
     @objc optional func animatedTextInputShouldEndEditing(animatedTextInput: AnimatedTextInput) -> Bool
     @objc optional func animatedTextInputShouldReturn(animatedTextInput: AnimatedTextInput) -> Bool
+    @objc optional func animatedTextInputShouldClear(textInput: AnimatedTextInput) -> Bool
 }
 
 open class AnimatedTextInput: UIControl {
@@ -538,7 +539,7 @@ open class AnimatedTextInput: UIControl {
 }
 
 extension AnimatedTextInput: TextInputDelegate {
-
+    
     open func textInputDidBeginEditing(textInput: TextInput) {
         becomeFirstResponder()
         delegate?.animatedTextInputDidBeginEditing?(animatedTextInput: self)
@@ -570,6 +571,11 @@ extension AnimatedTextInput: TextInputDelegate {
     open func textInputShouldReturn(textInput: TextInput) -> Bool {
         return delegate?.animatedTextInputShouldReturn?(animatedTextInput: self) ?? true
     }
+    
+    public func textFieldShouldClear(textInput: TextInput) -> Bool {
+        return delegate?.animatedTextInputShouldClear?(textInput: self) ?? true
+    }
+
 }
 
 public protocol TextInput {
@@ -606,6 +612,7 @@ public protocol TextInputDelegate: class {
     func textInputShouldBeginEditing(textInput: TextInput) -> Bool
     func textInputShouldEndEditing(textInput: TextInput) -> Bool
     func textInputShouldReturn(textInput: TextInput) -> Bool
+    func textFieldShouldClear(textInput: TextInput) -> Bool
 }
 
 public protocol TextInputError {

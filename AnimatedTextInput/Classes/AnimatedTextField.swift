@@ -180,4 +180,8 @@ extension AnimatedTextField: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         return textInputDelegate?.textInputShouldReturn(textInput: self) ?? true
     }
+    
+    public func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        return textInputDelegate?.textFieldShouldClear(textInput: self) ?? true
+    }
 }
