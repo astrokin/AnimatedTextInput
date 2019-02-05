@@ -218,23 +218,23 @@ open class AnimatedTextInput: UIControl {
         return isPlaceholderAsHint ? hintPosition : defaultPosition
     }
     
-    open var shouldBeginEditing: ((AnimatedTextInput) -> Bool)?
-    open var shouldEndEditing: ((AnimatedTextInput) -> Bool)?
-    open var didChange: ((AnimatedTextInput) -> Void)?
-    open var shouldReturn: ((AnimatedTextInput) -> Bool)?
-    open var shouldClear: ((AnimatedTextInput) -> Bool)?
-    open var shouldChangeCharactersInRange: ((AnimatedTextInput, NSRange, String) -> Bool)?
-    open var didBeginEditing: ((AnimatedTextInput) -> Void)?
-    open var didEndEditing: ((AnimatedTextInput) -> Void)?
+    open var shouldBeginEditing: ((TextInput) -> Bool)?
+    open var shouldEndEditing: ((TextInput) -> Bool)?
+    open var didChange: ((TextInput) -> Void)?
+    open var shouldReturn: ((TextInput) -> Bool)?
+    open var shouldClear: ((TextInput) -> Bool)?
+    open var shouldChangeCharactersInRange: ((TextInput, NSRange, String) -> Bool)?
+    open var didBeginEditing: ((TextInput) -> Void)?
+    open var didEndEditing: ((TextInput) -> Void)?
     
-    public init(shouldBeginEditing: ((AnimatedTextInput) -> Bool)? = nil,
-                shouldEndEditing: ((AnimatedTextInput) -> Bool)? = nil,
-                didChange: ((AnimatedTextInput) -> Void)? = nil,
-                shouldReturn: ((AnimatedTextInput) -> Bool)? = nil,
-                shouldClear: ((AnimatedTextInput) -> Bool)? = nil,
-                shouldChangeCharactersInRange: ((AnimatedTextInput, NSRange, String) -> Bool)? = nil,
-                didBeginEditing: ((AnimatedTextInput) -> Void)? = nil,
-                didEndEditing: ((AnimatedTextInput) -> Void)? = nil) {
+    public init(shouldBeginEditing: ((TextInput) -> Bool)? = nil,
+                shouldEndEditing: ((TextInput) -> Bool)? = nil,
+                didChange: ((TextInput) -> Void)? = nil,
+                shouldReturn: ((TextInput) -> Bool)? = nil,
+                shouldClear: ((TextInput) -> Bool)? = nil,
+                shouldChangeCharactersInRange: ((TextInput, NSRange, String) -> Bool)? = nil,
+                didBeginEditing: ((TextInput) -> Void)? = nil,
+                didEndEditing: ((TextInput) -> Void)? = nil) {
         self.shouldBeginEditing = shouldBeginEditing
         self.shouldEndEditing = shouldEndEditing
         self.didChange = didChange
@@ -573,38 +573,38 @@ extension AnimatedTextInput: TextInputDelegate {
     
     open func textInputDidBeginEditing(textInput: TextInput) {
         becomeFirstResponder()
-        didBeginEditing?(textInput as! AnimatedTextInput) ?? delegate?.animatedTextInputDidBeginEditing?(animatedTextInput: self)
+        didBeginEditing?(textInput) ?? delegate?.animatedTextInputDidBeginEditing?(animatedTextInput: self)
     }
 
     open func textInputDidEndEditing(textInput: TextInput) {
         resignFirstResponder()
-        didEndEditing?(textInput as! AnimatedTextInput) ?? delegate?.animatedTextInputDidEndEditing?(animatedTextInput: self)
+        didEndEditing?(textInput) ?? delegate?.animatedTextInputDidEndEditing?(animatedTextInput: self)
     }
 
     open func textInputDidChange(textInput: TextInput) {
         updateCounter()
         sendActions(for: .editingChanged)
-        didChange?(textInput as! AnimatedTextInput) ?? delegate?.animatedTextInputDidChange?(animatedTextInput: self)
+        didChange?(textInput) ?? delegate?.animatedTextInputDidChange?(animatedTextInput: self)
     }
 
     open func textInput(textInput: TextInput, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        return shouldChangeCharactersInRange?(textInput as! AnimatedTextInput, range, string) ?? delegate?.animatedTextInput?(animatedTextInput: self, shouldChangeCharactersInRange: range, replacementString: string) ?? true
+        return shouldChangeCharactersInRange?(textInput, range, string) ?? delegate?.animatedTextInput?(animatedTextInput: self, shouldChangeCharactersInRange: range, replacementString: string) ?? true
     }
 
     open func textInputShouldBeginEditing(textInput: TextInput) -> Bool {
-        return shouldBeginEditing?(textInput as! AnimatedTextInput) ?? delegate?.animatedTextInputShouldBeginEditing?(animatedTextInput: self) ?? true
+        return shouldBeginEditing?(textInput) ?? delegate?.animatedTextInputShouldBeginEditing?(animatedTextInput: self) ?? true
     }
 
     open func textInputShouldEndEditing(textInput: TextInput) -> Bool {
-        return shouldEndEditing?(textInput as! AnimatedTextInput) ?? delegate?.animatedTextInputShouldEndEditing?(animatedTextInput: self) ?? true
+        return shouldEndEditing?(textInput) ?? delegate?.animatedTextInputShouldEndEditing?(animatedTextInput: self) ?? true
     }
 
     open func textInputShouldReturn(textInput: TextInput) -> Bool {
-        return shouldReturn?(textInput as! AnimatedTextInput) ?? delegate?.animatedTextInputShouldReturn?(animatedTextInput: self) ?? true
+        return shouldReturn?(textInput) ?? delegate?.animatedTextInputShouldReturn?(animatedTextInput: self) ?? true
     }
     
     public func textFieldShouldClear(textInput: TextInput) -> Bool {
-        return shouldClear?(textInput as! AnimatedTextInput) ?? delegate?.animatedTextInputShouldClear?(textInput: self) ?? true
+        return shouldClear?(textInput) ?? delegate?.animatedTextInputShouldClear?(textInput: self) ?? true
     }
 
 }
