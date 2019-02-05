@@ -217,6 +217,37 @@ open class AnimatedTextInput: UIControl {
         )
         return isPlaceholderAsHint ? hintPosition : defaultPosition
     }
+    
+    open var shouldBeginEditing: ((TextInput) -> Bool)?
+    open var shouldEndEditing: ((TextInput) -> Bool)?
+    open var didChange: ((TextInput) -> Void)?
+    open var shouldReturn: ((TextInput) -> Bool)?
+    open var shouldClear: ((TextInput) -> Bool)?
+    open var shouldChangeCharactersInRange: ((TextInput, NSRange, String) -> Bool)?
+    open var didBeginEditing: ((TextInput) -> Void)?
+    open var didEndEditing: ((TextInput) -> Void)?
+    
+    public init(shouldBeginEditing: ((TextInput) -> Bool)? = nil,
+                shouldEndEditing: ((TextInput) -> Bool)? = nil,
+                didChange: ((TextInput) -> Void)? = nil,
+                shouldReturn: ((TextInput) -> Bool)? = nil,
+                shouldClear: ((TextInput) -> Bool)? = nil,
+                shouldChangeCharactersInRange: ((TextInput, NSRange, String) -> Bool)? = nil,
+                didBeginEditing: ((TextInput) -> Void)? = nil,
+                didEndEditing: ((TextInput) -> Void)? = nil) {
+        self.shouldBeginEditing = shouldBeginEditing
+        self.shouldEndEditing = shouldEndEditing
+        self.didChange = didChange
+        self.shouldReturn = shouldReturn
+        self.shouldClear = shouldClear
+        self.shouldChangeCharactersInRange = shouldChangeCharactersInRange
+        self.didBeginEditing = didBeginEditing
+        self.didEndEditing = didEndEditing
+        
+        super.init(frame: .zero)
+        
+        setupCommonElements()
+    }
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -542,38 +573,38 @@ extension AnimatedTextInput: TextInputDelegate {
     
     open func textInputDidBeginEditing(textInput: TextInput) {
         becomeFirstResponder()
-        delegate?.animatedTextInputDidBeginEditing?(animatedTextInput: self)
+        didBeginEditing?(textInput) ?? delegate?.animatedTextInputDidBeginEditing?(animatedTextInput: self)
     }
 
     open func textInputDidEndEditing(textInput: TextInput) {
         resignFirstResponder()
-        delegate?.animatedTextInputDidEndEditing?(animatedTextInput: self)
+        didEndEditing?(textInput) ?? delegate?.animatedTextInputDidEndEditing?(animatedTextInput: self)
     }
 
     open func textInputDidChange(textInput: TextInput) {
         updateCounter()
         sendActions(for: .editingChanged)
-        delegate?.animatedTextInputDidChange?(animatedTextInput: self)
+        didChange?(textInput) ?? delegate?.animatedTextInputDidChange?(animatedTextInput: self)
     }
 
     open func textInput(textInput: TextInput, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        return delegate?.animatedTextInput?(animatedTextInput: self, shouldChangeCharactersInRange: range, replacementString: string) ?? true
+        return shouldChangeCharactersInRange?(textInput, range, string) ?? delegate?.animatedTextInput?(animatedTextInput: self, shouldChangeCharactersInRange: range, replacementString: string) ?? true
     }
 
     open func textInputShouldBeginEditing(textInput: TextInput) -> Bool {
-        return delegate?.animatedTextInputShouldBeginEditing?(animatedTextInput: self) ?? true
+        return shouldBeginEditing?(textInput) ?? delegate?.animatedTextInputShouldBeginEditing?(animatedTextInput: self) ?? true
     }
 
     open func textInputShouldEndEditing(textInput: TextInput) -> Bool {
-        return delegate?.animatedTextInputShouldEndEditing?(animatedTextInput: self) ?? true
+        return shouldEndEditing?(textInput) ?? delegate?.animatedTextInputShouldEndEditing?(animatedTextInput: self) ?? true
     }
 
     open func textInputShouldReturn(textInput: TextInput) -> Bool {
-        return delegate?.animatedTextInputShouldReturn?(animatedTextInput: self) ?? true
+        return shouldReturn?(textInput) ?? delegate?.animatedTextInputShouldReturn?(animatedTextInput: self) ?? true
     }
     
     public func textFieldShouldClear(textInput: TextInput) -> Bool {
-        return delegate?.animatedTextInputShouldClear?(textInput: self) ?? true
+        return shouldClear?(textInput) ?? delegate?.animatedTextInputShouldClear?(textInput: self) ?? true
     }
 
 }
